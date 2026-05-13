@@ -1,0 +1,45 @@
+networks:
+  dev:
+
+services:
+  app:
+    networks:
+      - dev
+    depends_on:
+      database:
+        condition: service_healthy
+    build:
+      context: ./
+    command: --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      PSQL_HOST: database
+      PSQL_PORT: 5432
+    restart: unless-stopped
+  database:
+    networks:
+      - dev
+    image: postgres:15-alpine
+    ports:
+      - "${PSQL_EXT_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${PSQL_DB}
+      POSTGRES_USER: ${PSQL_USER}
+      POSTGRES_PASSWORD: ${PSQL_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+      start_period: 3s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

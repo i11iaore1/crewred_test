@@ -1,0 +1,8 @@
+# python
+venv/
+.env
+*.env
+__pycache__/
+
+# git
+.git/
