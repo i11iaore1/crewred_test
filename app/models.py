@@ -35,7 +35,7 @@ class Place(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    external_id: Mapped[int] = mapped_column(index=True)  # ID з Art Institute API
+    external_id: Mapped[int] = mapped_column(index=True)
     notes: Mapped[str | None]
     is_visited: Mapped[bool] = mapped_column(default=False)
     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"))

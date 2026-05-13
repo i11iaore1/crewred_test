@@ -2,10 +2,6 @@ from datetime import date
 from typing import List
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-
-# --- PLACE ---
-
-
 class PlaceBase(BaseModel):
     external_id: int
     notes: str | None = None
@@ -28,9 +24,6 @@ class PlaceRead(PlaceBase):
     model_config = ConfigDict(from_attributes=True)
 
 
-# --- PROJECT ---
-
-
 class ProjectBase(BaseModel):
     name: str
     description: str | None = None
@@ -38,7 +31,6 @@ class ProjectBase(BaseModel):
 
 
 class ProjectCreate(ProjectBase):
-    # Дозволяємо передавати список місць відразу при створенні проекту
     places: List[PlaceCreate] | None = Field(default=[], max_length=10)
 
     @field_validator("places")
@@ -49,7 +41,6 @@ class ProjectCreate(ProjectBase):
         if len(v) > 10:
             raise ValueError("A project cannot have more than 10 places.")
 
-        # Перевірка на унікальність external_id в межах одного запиту
         external_ids = [p.external_id for p in v]
         if len(external_ids) != len(set(external_ids)):
             raise ValueError(
